@@ -1,8 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 
-// ---------- football-data.org config ----------
-const API_KEY = 'c8c35d46455e42e68f94107cab1126bc';
-const API_BASE = 'https://api.football-data.org/v4';
+// ---------- football-data.org config (via Vercel proxy to avoid CORS + hide key) ----------
+const PROXY_BASE = '/api/football';
 
 // Competition codes on football-data.org that map to our local league keys
 const API_LEAGUE_CODES = {
@@ -16,9 +15,7 @@ const API_LEAGUE_CODES = {
 };
 
 async function apiFetch(path) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: { 'X-Auth-Token': API_KEY },
-  });
+  const res = await fetch(`${PROXY_BASE}?path=${encodeURIComponent(path)}`);
   if (!res.ok) {
     if (res.status === 429) throw new Error('Limite de pedidos atingido, tenta novamente em breve');
     throw new Error(`API error ${res.status}`);
